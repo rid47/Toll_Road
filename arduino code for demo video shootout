@@ -11,12 +11,12 @@ Stepper_28BYJ_48 stepper(8,9,10,11);
 //Connect IN1,IN2,IN3,IN4 to Arduino 8,9,10,11
 
 char rc;
-const int red_light;
-const int green_light;
+const int red_light=12;
+const int green_light=13;
 //////////////////////////////////////////////////////////////////////////////
 void setup() {
       
-       BTserial.begin(9600);
+       BTserial.begin(9600);//initializing bluetooth serial communication
        pinMode(red_light, OUTPUT);
        pinMode(green_light, OUTPUT); 
         
@@ -24,19 +24,20 @@ void setup() {
 
 //////////////////////////////////////////////////////////////////////////////
 void loop() {
+     
+     if (BTserial.available() > 0) //checking for any data incoming from bluetooth module to arduino RX
+     {
 
-     if (BTserial.available() > 0) {
-
-      rc = BTserial.read();
+      rc = BTserial.read();// reading the incoming bluetooth data
       
       if (rc=='o') {
 
-                digitalWrite(12,LOW);
-                digitalWrite(13,HIGH);
+                digitalWrite(red_light,LOW);
+                digitalWrite(green_light,HIGH);
                 
-                for (int i=128;i>=0;i--)
+                for (int i=128;i>=0;i--)// 128 steps for stepper motor. adjust this value to rotate it more or less steps
                 {
-                stepper.step(1);
+                stepper.step(1);// rotating 1 step at atime. increase it to increse speed.
                 
                 }
                 
@@ -45,8 +46,8 @@ void loop() {
 
         if (rc=='c' ){
 
-                digitalWrite(12,HIGH);
-                digitalWrite(13,LOW);
+                digitalWrite(red_light,HIGH);
+                digitalWrite(green_light,LOW);
                 
                 for (int i=128;i>=0;i--)
                 {
@@ -58,3 +59,4 @@ void loop() {
   
 }
 }
+
